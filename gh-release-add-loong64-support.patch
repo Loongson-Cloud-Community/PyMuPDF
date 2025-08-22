@@ -1,0 +1,58 @@
+diff --git a/scripts/gh_release.py b/scripts/gh_release.py
+index e1f99aa..cf6f13a 100755
+--- a/scripts/gh_release.py
++++ b/scripts/gh_release.py
+@@ -200,6 +200,7 @@ def build( platform_=None, valgrind=False):
+     inputs_skeleton = os.environ.get('inputs_skeleton')
+     inputs_wheels_default = get_bool('inputs_wheels_default', 1)
+     inputs_wheels_linux_aarch64 = get_bool('inputs_wheels_linux_aarch64', inputs_wheels_default)
++    inputs_wheels_linux_loongarch64 = get_bool('inputs_wheels_linux_loongarch64', inputs_wheels_default)
+     inputs_wheels_linux_auto = get_bool('inputs_wheels_linux_auto', inputs_wheels_default)
+     inputs_wheels_linux_pyodide = get_bool('inputs_wheels_linux_pyodide', 0)
+     inputs_wheels_macos_arm64 = get_bool('inputs_wheels_macos_arm64', 0)
+@@ -216,6 +217,7 @@ def build( platform_=None, valgrind=False):
+     log( f'{inputs_skeleton=}')
+     log( f'{inputs_wheels_default=}')
+     log( f'{inputs_wheels_linux_aarch64=}')
++    log( f'{inputs_wheels_linux_loongarch64=}')
+     log( f'{inputs_wheels_linux_auto=}')
+     log( f'{inputs_wheels_linux_pyodide=}')
+     log( f'{inputs_wheels_macos_arm64=}')
+@@ -258,6 +260,7 @@ def build( platform_=None, valgrind=False):
+     #
+     if (0
+             or inputs_wheels_linux_aarch64
++            or inputs_wheels_linux_loongarch64
+             or inputs_wheels_linux_auto
+             or inputs_wheels_macos_arm64
+             or inputs_wheels_macos_auto
+@@ -283,7 +286,7 @@ def build( platform_=None, valgrind=False):
+         # -3.13`. (Win32 builds need to use win64 Python because win32
+         # libclang is broken.)
+         #
+-        set_if_unset( 'CIBW_SKIP', 'pp* *i686 cp36* cp37* *musllinux*aarch64*')
++        set_if_unset( 'CIBW_SKIP', 'pp* *i686 cp36* cp37* *musllinux*aarch64* *musllinux*loongarch64*')
+     
+         def make_string(*items):
+             ret = list()
+@@ -308,8 +311,9 @@ def build( platform_=None, valgrind=False):
+             set_if_unset(
+                     'CIBW_ARCHS_LINUX',
+                     make_string(
+-                        'auto64' * inputs_wheels_linux_auto,
+-                        'aarch64' * inputs_wheels_linux_aarch64,
++                      #  'auto64' * inputs_wheels_linux_auto,
++                      #  'aarch64' * inputs_wheels_linux_aarch64,
++                        'loongarch64' * inputs_wheels_linux_loongarch64,
+                         ),
+                     )
+             if env_extra.get('CIBW_ARCHS_LINUX') == '':
+@@ -360,6 +364,8 @@ def build( platform_=None, valgrind=False):
+                 env_pass(name)
+ 
+         env_pass('PYMUPDF_SETUP_PY_LIMITED_API')
++        env_pass('HTTPS_PROXY')
++        env_pass('PIP_INDEX_URL')
+         
+         if os.environ.get('PYMUPDF_SETUP_LIBCLANG'):
+             env_pass('PYMUPDF_SETUP_LIBCLANG')
