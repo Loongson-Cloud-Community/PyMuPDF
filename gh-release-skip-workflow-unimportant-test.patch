@@ -1,0 +1,15 @@
+diff --git a/scripts/gh_release.py b/scripts/gh_release.py
+index 1cc8368..85d4609 100755
+--- a/scripts/gh_release.py
++++ b/scripts/gh_release.py
+@@ -119,8 +119,8 @@ def main():
+         v = os.environ[ k]
+         log( f'    {k}: {v!r}')
+     
+-    if test_py.github_workflow_unimportant():
+-        return
++    #if test_py.github_workflow_unimportant():
++    #    return
+     
+     valgrind = False
+     if len( sys.argv) == 1:
